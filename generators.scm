@@ -8,7 +8,7 @@
 
 ; void : -> void
 (define (void)
-  (if #f #t))
+ 'Done)
 
 ; tree-iterator : tree -> generator
 (define (tree-iterator tree)
@@ -28,9 +28,9 @@
 ; make-yield : continuation -> (value -> ...)
 (define (make-yield for-cc)
   (lambda (value)
-    (let ((cc (current-continuation)))
+    (let ((cc (current-continuation))) ; capture generator CC
       (if (procedure? cc)
-          (for-cc (cons cc value))
+          (for-cc (cons cc value)) ; pass new value to for loop CC
           (void)))))
 
 ; (for v in generator body) will execute body
@@ -40,14 +40,13 @@
   (syntax-rules (in) ;; scheme pattern matching macros http://www.willdonnelly.net/blog/scheme-syntax-rules/
     ((_ v in iterator body ...)
      ; =>
-     (let ((i iterator)
-           (iterator-cont #f))
+     (let ((iterator-cont #f))
        (letrec ((loop (lambda ()
-                        (let ((cc (current-continuation)))
+                        (let ((cc (current-continuation))) ;;capture CC
                           (if (procedure? cc)
                               (if iterator-cont
                                   (iterator-cont (void))
-                                  (iterator (make-yield cc)))
+                                  (iterator (make-yield cc))) ; pass for CC as yeld to tree-iterator
                               (let ((it-cont (car cc))
                                     (it-val  (cdr cc)))
                                 (set! iterator-cont it-cont)
