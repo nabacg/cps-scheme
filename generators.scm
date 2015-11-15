@@ -1,7 +1,7 @@
 #lang scheme
 
 ; current-continuation : -> continuation
-(define (current-continuation) 
+(define (current-continuation)
   (call-with-current-continuation
    (lambda (cc)
      (cc cc))))
@@ -15,14 +15,14 @@
   (lambda (yield)
 
     ;; Walk the tree, yielding the leaves.
-    
+
     (define (walk tree)
       (if (not (pair? tree))
           (yield tree)
           (begin
             (walk (car tree))
             (walk (cdr tree)))))
-    
+
     (walk tree)))
 
 ; make-yield : continuation -> (value -> ...)
@@ -33,13 +33,13 @@
           (for-cc (cons cc value))
           (void)))))
 
-; (for v in generator body) will execute body 
+; (for v in generator body) will execute body
 ; with v bound to successive values supplied
 ; by generator.
 (define-syntax for
-  (syntax-rules (in)
+  (syntax-rules (in) ;; scheme pattern matching macros http://www.willdonnelly.net/blog/scheme-syntax-rules/
     ((_ v in iterator body ...)
-     ; => 
+     ; =>
      (let ((i iterator)
            (iterator-cont #f))
        (letrec ((loop (lambda ()
@@ -55,13 +55,13 @@
                                   body ...)
                                 (loop)))))))
          (loop))))))
-                           
+
 
 ; Prints:
 ; 3
 ; 4
 ; 5
 ; 6
-(for v in (tree-iterator '(3 . ( ( 4 . 5 ) . 6 ) )) 
+(for v in (tree-iterator '(3 . ( ( 4 . 5 ) . 6 ) ))
   (display v)
   (newline))
