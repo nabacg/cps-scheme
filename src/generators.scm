@@ -28,9 +28,10 @@
 ; make-yield : continuation -> (value -> ...)
 (define (make-yield for-cc)
   (lambda (value)
+    ;when tree-iterator yields a value
     (let ((cc (current-continuation))) ; capture generator CC
       (if (procedure? cc)
-          (for-cc (cons cc value)) ; pass new value to for loop CC
+          (for-cc (cons cc value)) ; pass yielded value and this CC to for loop-CC
           (void)))))
 
 ; (for v in generator body) will execute body
@@ -47,8 +48,8 @@
                               (if iterator-cont
                                   (iterator-cont (void))
                                   (iterator (make-yield cc))) ; pass for CC as yeld to tree-iterator
-                              (let ((it-cont (car cc))
-                                    (it-val  (cdr cc)))
+                              (let ((it-cont (car cc)) ; get iterator-cc
+                                    (it-val  (cdr cc))); get yielded value
                                 (set! iterator-cont it-cont)
                                 (let ((v it-val))
                                   body ...)

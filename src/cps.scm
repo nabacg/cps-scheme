@@ -46,13 +46,13 @@
       'done))
   
 
-(let ([ x (call/cc (lambda (x) x))])
+(let ([x (call/cc (lambda (x) x))])
   (display "LET Binded x")
   (newline)
   (x (lambda (ignore) "hi")))
 
 ;sample mind bender cont
-(((call/cc (lambda (x) x)) (lambda (x) x)) "Hello World")
+(((call/cc (lambda (x) (display "Hello.. " ) x)) (lambda (x) (display "hello.. ")  x)) "Hello World")
 
 (define (hello-cc w)
   (((call/cc (lambda (x) x)) (lambda (x) x)) w))
