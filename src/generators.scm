@@ -3,8 +3,7 @@
 ; current-continuation : -> continuation
 (define (current-continuation)
   (call-with-current-continuation
-   (lambda (cc)
-     (cc cc))))
+   (lambda (cc) cc)))
 
 ; void : -> void
 (define (void)
