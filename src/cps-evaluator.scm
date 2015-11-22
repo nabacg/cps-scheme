@@ -39,13 +39,15 @@
 (define (application? exp)
   (pair? exp))
 
+;;only 2 arg functions atm
 (define (apply-procedure env exp cont)
   (lookup-variable env (car exp)
                    (lambda (v)
-                     (cont
-                      (apply v
-                            (map (lambda (op) (eval env op (lambda (x) x)))                                  (cdr exp)))))))
-                        ;(cdr exp))))))
+                     (eval env (cadr exp)
+                           (lambda (op1)
+                             (eval env (caddr exp)
+                                   (lambda (op2)
+                                     (cont (v op1 op2)))))))))
 
 (define (eval env exp cont)
   (cond
